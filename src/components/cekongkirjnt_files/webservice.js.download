@@ -1,0 +1,255 @@
+/**
+ * 表格配置
+ * @type {{elem: string, size: string, even: boolean, height: string, limits: number[], limit: number, page: boolean}}
+ */
+var tableConfig = {
+    elem: '#dbGrid',
+    size: 'sm',
+    even: true,
+    height: 'full-125',
+    limits: [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000],
+    limit: 50,
+    page: true //开启分页
+    //skin:'nob'
+};
+
+/**
+ * 获取表单数据，返回json数组
+ * @param formObj
+ * @returns {{}}
+ */
+function getFormData(formObj) {
+    var data = {};
+    var formData = formObj.serializeArray();
+    $.each(formData, function () {
+        data[this.name] = this.value;
+    });
+    return data;
+}
+
+/**
+ * 刷新父窗口表格
+ */
+function refreshTable() {
+    $('.layui-laypage-btn').trigger('click');//刷新当前页面
+}
+
+/**
+ * 设置cookie
+ *
+ * @param val
+ */
+function setUserinfo(key, val, expires) {
+    val = JSON.stringify(val);
+    if (typeof expires == 'undefined') {//不设置有效期，则浏览器关闭前cookie都有效
+        $.cookie(key, val, {path: '/'});
+    } else {//设置了有效期，则保持expire天的有效期
+        $.cookie(key, val, {path: '/', expires: expires});
+    }
+}
+
+/**
+ * 获取cookie
+ *
+ * @param key
+ * @returns {null}
+ */
+function getUserinfo(key) {
+    var val = $.cookie(key);
+    if (val) {
+        return JSON.parse(val);
+    } else {
+        return null;
+    }
+}
+
+/**
+ * 判断是否是json字符串
+ * @param str
+ * @returns {boolean}
+ */
+function isJsonString(str) {
+    try {
+        if (typeof JSON.parse(str) == "object") {
+            return true;
+        }
+    } catch (e) {
+    }
+    return false;
+}
+
+function RpcService1(baseUrl) {
+    var client = {
+        ajax: function (args, dataType) {
+            if (args.length == 0) args = [{}];
+
+            var _this = this;
+            args.format = "json";
+            args.v = "1.0";
+            var def = $.Deferred();
+            $.ajax({
+                type: "POST",
+                url: baseUrl,
+                data: args,
+                success: function (ret) {
+                    toast.hide();
+                    if (typeof ret == 'string') {
+                        ret = JSON.parse(ret);
+                    }
+                    if (args.method == 'website.register'
+                        || args.method == 'website.login'
+                        || args.method == 'website.createOrder'
+                        || args.method == 'website.getVerifyCode'
+                        || args.method == 'website.phoneUpdatePwd'
+                        || args.method == 'website.checkVerifyCode'
+                        || args.method == 'website.findMailbox'
+                        || args.method == 'website.sendEmail'
+                        || args.method == 'website.emailUpdatePwd'
+                        || args.method == 'website.cancelOrder'
+                        || args.method == 'website.updateUserInfo') {
+                        def.resolve(ret);
+                        return;
+                    }
+                    if (ret.code == '20000' || ret.code == '20002') {
+                        def.resolve(ret.data);
+                    } else {
+                        def.reject(ret.code);
+                    }
+                },
+                error: function (err) {
+                    toast.hide();
+                    def.reject(err);
+                },
+                dataType: dataType
+            });
+            return def;
+        },
+        onerror: null,
+        invoke: function (args, callback) {
+            var promise = this.ajax(args, 'json');
+            if (callback) {
+                promise.then(callback);
+            }
+            return promise;
+        },
+        invokep: function (args, callback) {
+            var promise = this.ajax(args, 'jsonp');
+            if (callback) {
+                promise.then(callback);
+            }
+            return promise;
+        }
+    };
+    //全局异常处理
+    client.onerror = function (err) {
+        if (typeof parent.layer != 'undefined') {
+            layer.closeAll();
+            parent.layer.msg(err, {icon: 2});
+        } else if (typeof layer != 'undefined') {
+            layer.closeAll();
+            layer.msg(err, {icon: 2});
+        } else {
+            alert(err);
+        }
+    };
+    return client;
+}
+
+
+function RouterService(baseUrl) {
+    var client = {
+        ajax: function (args, dataType) {
+            if (args.length == 0) args = [{}];
+
+            var _this = this;
+            var def = $.Deferred();
+            var murmur = localStorage.getItem("murmur");
+            args.pId = murmur;
+            args.pst = (murmur + 'j&t2020app!@#').MD5(32);
+
+            $.ajax({
+                type: 'POST',
+                url: baseUrl,
+                data: args,
+                dataType: dataType,
+                headers: {
+                    'X-SimplyPost-Id': murmur,
+                    'X-SimplyPost-Signature': (murmur + 'j&t2020app!@#').MD5(32)
+                },
+                success: function (ret) {
+                    toast.hide();
+                    if (typeof ret == 'string') {
+                        ret = JSON.parse(ret);
+                    }
+                    if (args.method == 'website.register'
+                        || args.method == 'website.login'
+                        || args.method == 'website.createOrder'
+                        || args.method == 'website.getVerifyCode'
+                        || args.method == 'website.phoneUpdatePwd'
+                        || args.method == 'website.checkVerifyCode'
+                        || args.method == 'website.getVerifyCode'
+                        || args.method == 'website.findMailbox'
+                        || args.method == 'website.sendEmail'
+                        || args.method == 'website.emailUpdatePwd'
+                        || args.method == 'website.updateUserInfo'
+                        || args.method == 'website.createExpAddress'
+                        || args.method == 'website.updateExpAddress'
+                        || args.method == 'website.cancelOrder'
+                        || args.method == 'website.deleteExpAddress'
+                        || args.method == 'website.changeEmail'
+                        || args.method == 'website.sendEmailToNewEmail'
+                        || args.method == 'website.googleWebLogin') {
+                        def.resolve(ret);
+                        return;
+                    }
+                    if (ret.code == '20000' || ret.code == '20002' || ret.code == 10000) {
+                        def.resolve(ret.data);
+                    } else {
+                        //需要重新登录
+                        if (ret.code == 70001) {
+                            reLogin();
+                        }
+                        def.reject(ret.code);
+                    }
+                },
+                error: function (err) {
+                    toast.hide();
+                    def.reject(err);
+                },
+            });
+            return def;
+        },
+        onerror: null,
+        invoke: function (args, callback) {
+            var promise = this.ajax(args, 'json');
+            if (callback) {
+                promise.then(callback);
+            }
+            return promise;
+        },
+        invokep: function (args, callback) {
+            var promise = this.ajax(args, 'jsonp');
+            if (callback) {
+                promise.then(callback);
+            }
+            return promise;
+        }
+    };
+    //全局异常处理
+    client.onerror = function (err) {
+        if (typeof parent.layer != 'undefined') {
+            layer.closeAll();
+            parent.layer.msg(err, {icon: 2});
+        } else if (typeof layer != 'undefined') {
+            layer.closeAll();
+            layer.msg(err, {icon: 2});
+        } else {
+            alert(err);
+        }
+    };
+    return client;
+}
+
+
+//var client = RpcService1('http://113.21.243.182/jandt-businessapp-web/router');
+var client = RpcService1('http://202.159.30.42:22241/jandt-businessapp-web/router');

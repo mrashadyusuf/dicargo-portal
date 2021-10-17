@@ -1,0 +1,11 @@
+$(document).ready(function () {
+    setTimeout(() => {
+        jQuery("#da-slider").cslider();
+
+        if ($('.da-dots')) {
+            if ($('.da-dots')[1]) {
+                $('.da-dots')[1].remove();
+            }
+        }
+    }, 1000);
+});

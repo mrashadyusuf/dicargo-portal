@@ -1,0 +1,22 @@
+{
+    "artcicles":[
+
+        {"id":1, "title":"Lorem Ipsum", "content":"coconconconcn"},
+        {"id":2, "title":"Lorem Ipsum", "content":"coconconconcn"},
+        {"id":3, "title":"Lorem Ipsum", "content":"coconconconcn"}
+
+    ],
+
+    "timelineHistory":[
+
+        {"day":"2021-08-12 14:28:38", "location":"Drop Point", "city":"Pemalang","status":"Delivered to M  Taufik Ikhsan"},
+        {"day":"2021-08-12 14:28:38", "location":"Transit Center", "city":"Pemalang","status":"On delivery by Mukhli"},
+        {"day":"2021-08-12 14:28:38", "location":"Transit Center", "city":"Malang","status":"Arrived"},
+        {"day":"2021-08-12 14:28:38", "location":"DropPoint", "city":"Malang","status":"Delivered to M  Taufik Ikhsan"},
+        {"day":"2021-08-12 14:28:38", "location":"DropPoint", "city":"Malang","status":"Delivered to M  Taufik Ikhsan"},
+        {"day":"2021-08-12 14:28:38", "location":"DropPoint", "city":"Malang","status":"Delivered to M  Taufik Ikhsan"},
+        {"day":"2021-08-12 14:28:38", "location":"DropPoint", "city":"Malang","status":"Delivered to M  Taufik Ikhsan"},
+        {"day":"2021-08-12 14:28:38", "location":"DropPoint", "city":"Malang","status":"Delivered to M  Taufik Ikhsan"}
+    ]
+
+}

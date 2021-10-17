@@ -1,0 +1,28 @@
+loadScript("https://www.googletagmanager.com/gtag/js?id=UA-148495725-1", () => successCalback());
+//this function will work cross-browser for loading scripts asynchronously
+function loadScript(src, callback)
+{
+  console.log('Load Script');
+  var s,
+      r,
+      t;
+  r = false;
+  s = document.createElement('script');
+  s.async = true;
+  s.src = src;
+  s.onload = s.onreadystatechange = function() {
+    if ( !r && (!this.readyState || this.readyState == 'complete') )
+    {
+      r = true;
+      callback();
+    }
+  };
+  t = document.getElementsByTagName('script')[0];
+  t.parentNode.insertBefore(s, t);
+}
+function successCalback() {
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-148495725-1');
+}
